@@ -6,16 +6,22 @@
 "
 
 " {{{ Plugins Manager
+if has('win32') || has('win64')
+    let g:VIMHOME = "$HOME/vimfiles/"
+else
+    let g:VIMHOME = "$HOME/.vim/"
+endif
 
-call plug#begin('~/.vim/plugged')
+" call plug#begin('$HOME/vimfiles/plugged')
+call plug#begin(g:VIMHOME . 'plugged')
 
 " ~~ Built-in plugin (i.e. tpope) ~~
 Plug 'tpope/vim-fugitive'                           | " Illegal Git Wrapper
 Plug 'tpope/vim-commentary'                         | " Comment Block
 Plug 'tpope/vim-eunuch'                             | " Helpers for UNIX
 Plug 'kassio/neoterm'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } | " Fuzzy Files Finder
-Plug 'junegunn/fzf.vim'                             | " fzf Wrapper for Vim
+" Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } | " Fuzzy Files Finder
+" Plug 'junegunn/fzf.vim'                             | " fzf Wrapper for Vim
 
 " ~~ Missing motion ~~
 Plug 'rhysd/clever-f.vim'                           | " Motion Improvement
@@ -69,7 +75,6 @@ Plug 'benmills/vimux'                               | " REPL Programming
 
 call plug#end()
 " }}}
-
 " {{{ Settings
 "   ____         _    _    _
 "  / ___|   ___ | |_ | |_ (_) _ __    __ _
@@ -80,6 +85,22 @@ call plug#end()
 
 filetype plugin indent on
 
+" {{{ GUI
+if has("gui_running")
+    set guifont=Lucida_Console:h12
+    set guioptions-=T
+    set guioptions-=r
+    set guioptions-=R
+    set guioptions-=m
+    set guioptions-=l
+    set guioptions-=L
+    set guitablabel=%t
+    set guicursor=n-v-c:block-Cursor
+    " set guicursor+=i:block-Cursor
+    set guicursor+=i:ver25-Cursor/lCursor
+    set guicursor+=a:blinkon0
+endif
+" }}} 
 " {{{ Editor
 set number          | " Show line number
 set relativenumber  | " Set relative number
@@ -134,7 +155,6 @@ set timeoutlen=500
 " }}}
 
 " }}}
-
 " {{{ Colors
 "⟦    ____      _
 "   / ___|___ | | ___  _ __
@@ -189,7 +209,6 @@ endfunction
 " }}}
 
 " }}}
-
 " {{{ Autocommands
 
 "               _                           _
@@ -233,7 +252,6 @@ command! Wc call CleanSave()
 " let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
 
 " }}}
-
 " {{{ Mapping
 "   __  __                   _
 "  |  \/  | __ _ _ __  _ __ (_)_ __   __ _
@@ -367,12 +385,11 @@ nnoremap <leader>, :edit $MYVIMRC<CR>
 nnoremap <leader>r :source $MYVIMRC<CR>
 
 " }}}
-
 " {{{ Private Configuration
 " TODO: autoload function
-source ~/.vim/conf/functions.vim  | " Private function
+runtime conf/functions.vim  | " Private function
 " }}}
-
+" {{{ TODO's
 "TODO:
 
 " Real Delete (no save in register)
@@ -385,3 +402,5 @@ source ~/.vim/conf/functions.vim  | " Private function
 nnoremap <tab> %
 nnoremap H ^
 nnoremap L $
+
+" }}}
