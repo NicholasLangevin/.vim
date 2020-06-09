@@ -19,7 +19,11 @@ call plug#begin(g:VIMHOME . 'plugged')
 Plug 'tpope/vim-fugitive'                           | " Illegal Git Wrapper
 Plug 'tpope/vim-commentary'                         | " Comment Block
 Plug 'tpope/vim-eunuch'                             | " Helpers for UNIX
-Plug 'kassio/neoterm'
+Plug 'vimwiki/vimwiki'
+" Plug 'kassio/neoterm'
+
+" Fuzzy file finder with no external dependencies (i.e. for work)
+Plug 'kien/ctrlp.vim'
 " Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } | " Fuzzy Files Finder
 " Plug 'junegunn/fzf.vim'                             | " fzf Wrapper for Vim
 
@@ -28,36 +32,27 @@ Plug 'rhysd/clever-f.vim'                           | " Motion Improvement
 Plug 'justinmk/vim-sneak'
 
 " ~~ Usefull plugins
-Plug 'ap/vim-buftabline'                            | " Buffer View
-Plug 'liuchengxu/vim-which-key'                     | " Build in cheatsheet
-Plug 'vimwiki/vimwiki'
+" Plug 'ap/vim-buftabline'                            | " Buffer View
+" Plug 'liuchengxu/vim-which-key'                     | " Build in cheatsheet
 
 " ~~ Colorshemes ~~
 Plug 'KeitaNakamura/neodark.vim'                    | " Neodark Theme
-Plug 'arcticicestudio/nord-vim'                     | " Nord Theme
-Plug 'altercation/vim-colors-solarized'
-Plug 'lifepillar/vim-solarized8'
-Plug 'sonph/onehalf', {'rtp': 'vim/'}
-Plug 'drewtempelmeyer/palenight.vim'
 
 " ~~ Status line
-Plug 'itchyny/lightline.vim'                        | " Status Bar
+" Plug 'itchyny/lightline.vim'                        | " Status Bar
 
-" ~~ Filetypes ~~
+" Filetypes {{{
 Plug 'dag/vim-fish'                                 | " Syntax for fish script
-
-" ~~ Markdown ~~
-
-" ~~ Terminal support ~~
+" }}}
 
 " ~~ Git improvement ~~
-Plug 'airblade/vim-gitgutter'                       | " Git Blame Myself
-Plug 'samoshkin/vim-mergetool'                      | " Git Mergtool
+" Plug 'airblade/vim-gitgutter'                       | " Git Blame Myself
+" Plug 'samoshkin/vim-mergetool'                      | " Git Mergtool
 
 
 
-Plug 'preservim/nerdtree'                           | " Files Managers
-Plug 'benmills/vimux'                               | " REPL Programming
+" Plug 'preservim/nerdtree'                           | " Files Managers
+" Plug 'benmills/vimux'                               | " REPL Programming
 " Plug 'gu-fan/simpleterm.vim'
 "
 "
@@ -85,12 +80,54 @@ call plug#end()
 
 filetype plugin indent on
 
+" {{{ Basic Settings
+set nocompatible                  | " Do not try to be *vi* compatible
+set clipboard=unnamed,unnamedplus | " Sync register with (*) and (+) clipboards
+set spelllang=en_us,fr            | " Language setting
+set foldmethod=marker             | " How to use fold in vim
+set encoding=utf-8                | " Encoding
+set autowrite                     | " Automatically save before commands like :next and :make
+set backspace=indent,eol,start    | " Set backspace to act like normal
+set ttimeoutlen=100               | " Set waiting terminal key codes(i.e. fast <esc>)
+set timeoutlen=500                | " Set waiting time between vim keypress
+set number                        | " Show line number
+set relativenumber                | " Set relative number
+set laststatus=2                  | " Always displaying the status bar
+set noshowmode                    | " Dont show the mode (insert, normal,..)
+set colorcolumn=80                | " Line width indicator
+set wrap                          | " Enable wrapping text
+set showmatch                     | " Show matching bracket
+set hidden                        | " Change buffer focus without saving
+set splitbelow splitright         | " Split Windows as expected
+" }}}
+" {{{ Indentation
+set tabstop=4                     | " Tabs are at proper location
+set shiftwidth=4                  | " Indent 4 space when using <tab>
+
+set autoindent                    | " Copy indent when starting new line
+set smartindent                   | " Smart autoindenting when starting new line
+set smarttab                      | " Indent according to 'shiftwidth' value
+set expandtab                     | " Insert spaces when using <Tab>
+set cindent                       | " Use the C indenting rules
+" }}}
+" {{{ Search
+set nohlsearch                    | " Don't Highlight matching pattern
+set incsearch                     | " Search as I type character
+set ignorecase                    | " Insensitive mathching
+set smartcase                     | " Use smartcase only when using CAP
+" }}}
+" {{{ Mouse
+set mouse=a                       | " Enable the use of the mouse
+if !has('nvim')
+    set ttymouse=sgr              | " Needed for Alacritty terminal
+endif
+" }}}
 " {{{ GUI
 if has("gui_running")
     set guifont=Lucida_Console:h12
     set guioptions-=T
-    set guioptions-=r
-    set guioptions-=R
+    " set guioptions-=r
+    " set guioptions-=R
     set guioptions-=m
     set guioptions-=l
     set guioptions-=L
@@ -101,58 +138,6 @@ if has("gui_running")
     set guicursor+=a:blinkon0
 endif
 " }}} 
-" {{{ Editor
-set number          | " Show line number
-set relativenumber  | " Set relative number
-set noshowmode      | " Dont show the mode (insert, normal,..)
-set ttimeoutlen=1   | " Key waiting time
-set laststatus=2    | " Always displaying the status bar
-" }}}
-" {{{ Text
-set colorcolumn=80            | " Line width indicator
-set wrap                      | " Enable wrapping text
-set showmatch                 | " Show matching bracket
-" }}}
-" {{{ Buffer
-" set hidden | " Change buffer focus without saving
-" }}}
-" {{{ Windows
-set splitbelow splitright     | " Split Windows as expected
-" }}}
-" {{{ Indentation
-" Number of spaces that a <Tab> in the file counts for
-set tabstop=4    | "Tabs are at proper location
-set shiftwidth=4 | "Indent 4 space when using <tab>
-
-set autoindent   | " Copy indent when starting new line
-set smartindent  | " Smart autoindenting when starting new line
-set smarttab     | " Indent according to 'shiftwidth' value
-set expandtab    | " Proper indentation with '>' and '<'
-set cindent      | " Use the C indenting rules
-" }}}
-" {{{ Search
-set nohlsearch | "Don't Highlight matching pattern
-set incsearch  | "Search as I type character
-set ignorecase | " Insensitive mathching
-set smartcase  | " Use smartcase only when needed
-" }}}
-" {{{ Mouse
-set mouse=a | " Enable the use of the mouse
-if !has('nvim')
-    set ttymouse=sgr
-endif
-" }}}
-" {{{ Vim Behavior
-set nocompatible                  | " Vim behave in a more useful way
-set clipboard=unnamed,unnamedplus | " Sync register with (*) and (+) clipboard
-set spelllang=en_us,fr            | " Language setting
-set foldmethod=marker             | " How to use fold in vim
-set encoding=utf-8                | " Encoding
-set autowrite                     | " Automatically save before commands like :next and :make
-set backspace=indent,eol,start    | " Set backspace to act like normal
-set complete-=i                   | " Set autocomplete to scan file and included file
-set timeoutlen=500
-" }}}
 
 " }}}
 " {{{ Colors
@@ -222,6 +207,7 @@ autocmd InsertLeave * set relativenumber
 
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
+" {{{ Trailling Whitespaces
 " 1. highlight trailing whitespace in red
 " 2. have this highlighting not appear while you are typing in insert mode
 " 3. have the highlighting of whitespace apply when you open new buffers
@@ -243,13 +229,7 @@ function CleanSave()
   endif
 endfunction
 command! Wc call CleanSave()
-
-" autocmd InsertEnter * set cul
-" autocmd InsertLeave * set nocul
-
-" ~~ Block & Line cursor ~~
-" let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
-" let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+" }}}
 
 " }}}
 " {{{ Mapping
@@ -260,75 +240,28 @@ command! Wc call CleanSave()
 "  |_|  |_|\__,_| .__/| .__/|_|_| |_|\__, |
 "               |_|   |_|            |___/
 
-let mapleader = "\<space>"
+let mapleader = ","
 
-" {{{ +Windows
-"@def:delete
-nnoremap <leader>wd <C-W>c
-"@def:resize
-nnoremap <leader>w= <C-W>='
-"@def:fzf-split
-nnoremap <leader>ws :call fzf#run({'down': '40%', 'sink': 'split' })<CR>
-"@def:fzf-vsplit
-nnoremap <leader>wv :call fzf#run({'down': '40%', 'sink': 'vsplit' })<CR>
-nnoremap <leader>wh <C-W>h
-nnoremap <leader>wj <C-W>j
-nnoremap <leader>wk <C-W>k
-nnoremap <leader>wl <C-W>l
-nnoremap <leader>wo <C-W>o
-nnoremap <leader>wH <C-W>5<'
-nnoremap <leader>wJ :resize +5'
-nnoremap <leader>wL <C-W>5>'
-nnoremap <leader>wK :resize -5'
-" TODO: https://github.com/dhruvasagar/vim-zoom
+" {{{ Buffers and Windows navigation
 
-tnoremap <leader>ww <C-W>w
-tnoremap <leader>wc <C-W>c
-tnoremap <leader>wh <C-W>h
-tnoremap <leader>wj <C-W>j
-tnoremap <leader>wk <C-W>k
-tnoremap <leader>wl <C-W>l
-tnoremap <leader>wH <C-W>5<'
-tnoremap <leader>wJ resize +5'
-tnoremap <leader>wL <C-W>5>'
-tnoremap <leader>wK resize -5'
-" }}}
-" {{{ +Buffers
-nnoremap <silent> <leader><space> :Buffers<CR>
+" Remap basic windows command to space
+nnoremap <space>wh <C-W>h
+nnoremap <space>wj <C-W>j
+nnoremap <space>wk <C-W>k
+nnoremap <space>wl <C-W>l
+nnoremap <space>w= <C-W>=
+nnoremap <space>wo <C-W>o
+nnoremap <space>ws <C-w>s
+nnoremap <space>wv <C-w>v
 
-"@def:bprevious
-nnoremap <silent> <leader>[ :bprevious<CR>
-"@def:bnext
-nnoremap <silent> <leader>] :bnext<CR>
-"@def:bfirst
-nnoremap <silent> <leader>{ :bfirst<CR>
-"@def:blast
-nnoremap <silent> <leader>} :blast<CR>
-"@def:bdelete
-nnoremap <silent> <leader>d :bd<CR>
-" }}}
-" {{{ +Files
-"@def:open
-nnoremap <leader>ff :Files<CR>
-"@def:git-open
-nnoremap <leader>fg :GFiles<CR>
-"@def:rename
-nnoremap <leader>fr :Rename<space>
-"@def:delete
-nnoremap <silent><leader>fd :if confirm('Delete file from system?', "&Yes\n&No", 1)==1 <Bar> exe ":Delete" <Bar> endif<CR><CR>
-"@def:move
-nnoremap <leader>fm :Move<space>
-"@def:permission
-map <leader>fp :echo system("ls -l " . bufname("%") . " \| egrep -o '[rwx-]{10}'")<CR>:Chmod<space>
+" Quick buffers navigation
+nnoremap <silent><space><space> :CtrlPBuffer<CR>
+nnoremap <silent><space>[ :bprevious<CR>
+nnoremap <silent><space>] :bnext<CR>
+nnoremap <silent><space>d :bd<CR>
 
-" }}}
-" {{{ +git
-"@def:add
-nnoremap <leader>ga :Git add %<CR>
-"@def:status
-nnoremap <leader>gs :Git status<CR>
-"@def:commit
-nnoremap <leader>gc :Git commit<CR>
+" Fuzzer file openning
+nnoremap <silent><leader>f :CtrlP<CR>
 " }}}
 " {{{ Disable arrow keys
 no  <down>  <Nop>
@@ -344,26 +277,26 @@ vno <left>  <Nop>
 vno <right> <Nop>
 vno <up>    <Nop>
 " }}}
-" {{{ Cursor moving
-" ~~ Move cyrsor in command-line ~~
+" {{{ Cursor navigation
+" Move cyrsor in command-line
 cnoremap <c-h> <left>
 cnoremap <c-j> <s-left>
 cnoremap <c-k> <s-right>
 cnoremap <c-l> <right>
 
-" ~~ Move cursor without exit insert mode ~~
+" Move cursor without exit insert mode
 inoremap <C-h> <left>
 inoremap <C-l> <right>
 inoremap <C-k> <up>
 inoremap <C-j> <down>
 
-" ~~ Visual line navigation ~~
+" Visual line navigation
 nnoremap j gj
 nnoremap k gk
 vnoremap j gj
 vnoremap k gk
 " }}}
-
+" {{{ Miscellaneous
 "Add line without go in insert mode"
 nnoremap = o<esc>
 nnoremap + O<esc>j
@@ -381,14 +314,20 @@ inoremap ± ~
 vnoremap < <gv
 vnoremap > >gv
 
+" Vimrc management
 nnoremap <leader>, :edit $MYVIMRC<CR>
-nnoremap <leader>r :source $MYVIMRC<CR>
+autocmd! bufwritepost $MYVIMRC source $MYVIMRC
+
+" Productif mapping
+nnoremap <tab> %
+nnoremap H ^
+nnoremap L $
 
 " }}}
-" {{{ Private Configuration
-" TODO: autoload function
-runtime conf/functions.vim  | " Private function
+" {{{ VimWiki
 " }}}
+
+
 " {{{ TODO's
 "TODO:
 
@@ -398,9 +337,11 @@ runtime conf/functions.vim  | " Private function
 " While in insert mode, delete the last line (like <C-W>)
 " inoremap <C-l> <esc>d(
 
-" Nice mapping
-nnoremap <tab> %
-nnoremap H ^
-nnoremap L $
+" {{{ +Files
+" nnoremap <silent><leader>fd :if confirm('Delete file from system?', "&Yes\n&No", 1)==1 <Bar> exe ":Delete" <Bar> endif<CR><CR>
+" nnoremap <leader>fm :Move<space>
+" map <leader>fp :echo system("ls -l " . bufname("%") . " \| egrep -o '[rwx-]{10}'")<CR>:Chmod<space>
+
+" }}}
 
 " }}}
