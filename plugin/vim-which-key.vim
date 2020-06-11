@@ -7,6 +7,9 @@
 "
 
 
+finish
+
+
 " {{{ Settings
 let g:which_key_flatten = 0          | " Try to flatten out the keymappings if necessary.
 let g:which_key_exit = "\<esc>"      | " Use <esc> to exit the cheatsheet
