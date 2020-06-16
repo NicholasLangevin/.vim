@@ -5,50 +5,12 @@
 "     \_/  |___|_|  |_|_| \_\\____|
 "
 
-" {{{ Plugins
-if has('win32') || has('win64')
-    let g:VIMHOME = "$HOME/vimfiles/"
-else
-    let g:VIMHOME = "$HOME/.vim/"
-endif
-
-" call plug#begin('$HOME/vimfiles/plugged')
-call plug#begin(g:VIMHOME . 'plugged')
-
-" Built-in plugin (i.e. tpope)
-Plug 'tpope/vim-fugitive'                           | " Illegal Git Wrapper
-Plug 'tpope/vim-commentary'                         | " Comment Block
-Plug 'tpope/vim-eunuch'                             | " Helpers for UNIX
-Plug 'vimwiki/vimwiki'
-Plug 'tpope/vim-scriptease'
-
-" Fuzzy file finder with no external dependencies (i.e. for work)
-Plug 'kien/ctrlp.vim'
-" Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } | " Fuzzy Files Finder
-" Plug 'junegunn/fzf.vim'                             | " fzf Wrapper for Vim
-
-" Motion
-Plug 'rhysd/clever-f.vim'                           | " Motion Improvement
-Plug 'justinmk/vim-sneak'
-
-" Colorsheme
-Plug 'KeitaNakamura/neodark.vim'                    | " Neodark Theme
-" Plug 'itchyny/lightline.vim'                        | " Status Bar
-
-Plug 'file://' . expand('C:\Users\Lange\vim-QuickFixTodo')
-
-
-" Filetypes {{{
-Plug 'dag/vim-fish'                                 | " Syntax for fish script
-" }}}
-
-call plug#end()
-" }}}
 " {{{ Settings
 
 filetype plugin indent on
 let mapleader = ","
 let maplocalleader = "\\"
+
 
 " {{{ Basic Settings
 set nocompatible                  | " Do not try to be *vi* compatible
@@ -65,7 +27,8 @@ set relativenumber                | " Set relative number
 set laststatus=2                  | " Always displaying the status bar
 set noshowmode                    | " Dont show the mode (insert, normal,..)
 set textwidth=80                  | " Set value for the autowrap (see formatoptions)
-set formatoptions=cr              | " Auto-wrap comment (c) and Auto-insert comment on <Enter> press
+set formatoptions=cr              | " Auto-wrap comment (c), auto-insert commented on <Enter> press
+let &showbreak = "🠞 "             | " Unicode of wrapped line indicator
 set colorcolumn=80                | " Line width indicator TODO: autocmd line wrap in md, Rmd, tex, txt.., gitcommit
 set wrap                          | " Enable wrapping text
 set showmatch                     | " Show matching bracket
@@ -119,7 +82,10 @@ endif
 " {{{ Colors
 
 syntax enable
-colorscheme neodark
+let g:gruvbox_italic = 0
+let g:gruvbox_contrast_dark = 'medium'
+let g:gruvbox_invert_selection = 0
+colorscheme gruvbox
 
 " {{{ Setting true color
 if !has('gui_running')
@@ -159,11 +125,7 @@ let g:lightline = {
 let g:lightline.subseparator = { 'left': '', 'right': '|' }
 
 function! LightlineTodo()
-    " return '✓ 2 Todo'
-    " return '☖ 2'
-    " return '☕2'
-    " ⍿
-    return '[Git(master)]'
+    return '[Todo:1]'
 endfunction
 
 function! LightlineGitbranch()
@@ -171,7 +133,6 @@ function! LightlineGitbranch()
 	return l:bname != '' ? l:bname : ''
 endfunction
 " }}}
-
 " }}}
 " {{{ Modal relative number
 autocmd InsertEnter * set norelativenumber
@@ -198,7 +159,7 @@ command! Wc call TrailingWhitespace#DeleteTrailingWhitespaceAndSave()
 augroup quickfix
     autocmd!
     autocmd QuickFixCmdPost [^l]* nested cwindow
-    " autocmd QuickFixCmdPost    l* nested lwindow " FIXME: For TodoToggle, I
+    " autocmd QuickFixCmdPost    l* nested lwindow " FIXME: For vim-QuickFixTodo, I
     " dont when this.. (i.e. find way to not apply this for Todo location list)
 augroup END
 " }}}
@@ -211,7 +172,7 @@ nnoremap + O<esc>j
 vnoremap <C-j> :m'>+<cr>`<my`>mzgv`yo`z
 vnoremap <C-k> :m'<-2<cr>`>my`<mzgv`yo`z
 
-" Weird mapping for my french mac keyboard when using US mapping
+" Weird mapping for my french mac keyboard when using US keybord layout
 nnoremap § `
 inoremap § `
 inoremap ± ~
@@ -230,7 +191,11 @@ nnoremap <tab> %
 nnoremap H ^
 nnoremap L $
 
+" More usefull path auto-complete
 inoremap <C-f> <C-x><C-f>
+
+" Copy end of line
+nnoremap Y v$<left>y
 
 " }}}
 " {{{ Buffers and Windows navigation
@@ -295,7 +260,9 @@ cnoremap <c-h> <left>
 cnoremap <c-j> <s-left>
 cnoremap <c-k> <s-right>
 cnoremap <c-l> <right>
-cmap <C-V> <C-R>+
+if has('win32') || has('win64')
+    cmap <C-V> <C-R>+
+endif
 
 " Move cursor without exit insert mode
 inoremap <C-h> <left>
@@ -310,6 +277,63 @@ vnoremap j gj
 vnoremap k gk
 " }}}
 " {{{ VimWiki
+" let g:vimwiki_list = [{'path'            : '$HOME/vimwiki/',
+"                      \ 'name'            : 'vimwiki',
+"                      \ 'template_path'   : '$HOME/.vim/vimwiki/templates/',
+"                      \ 'template_default': 'dark-theme',
+"                      \ 'template_ext'    : '.html',
+"                      \ 'auto_export'     : 1,
+"                      \ 'auto_toc'        : 1}]
+
+" let wiki_2 = {}
+" let wiki_2.path= '$HOME/Documents/vim/wiki'
+" let wiki_2.template_path= '$HOME/Documents/vim/wiki/templates'
+" let wiki_2.template_default= 'def_template'
+" let wiki_2.template_ext= '.html'
+
+" let wiki_1 = {}
+" let wiki_1.path = '$HOME/VimWiki'
+" let wiki_1.path_html = '$HOME/VimWiki/html'
+" let wiki_1.template_path= wiki_1.path_html . '/template'
+" let wiki_1.template_default = 'default'
+" let wiki_1.template_ext = '.htm'
+
+let g:vimwiki_key_mappings =
+  \ {
+  \   'all_maps': 1,
+  \   'global': 1,
+  \   'headers': 0,
+  \   'text_objs': 1,
+  \   'table_format': 1,
+  \   'table_mappings': 1,
+  \   'lists': 1,
+  \   'links': 1,
+  \   'html': 1,
+  \   'mouse': 0,
+  \ }
+
+
+let wiki = {}
+let wiki.path= '$HOME/WIKI'
+let wiki.path_html = '$HOME/WIKI/html'
+let wiki.template_path= '$HOME/WIKI/templates'
+let wiki.template_default= 'dark-template'
+let wiki.template_ext= '.html'
+let wiki.auto_export = 1
+let wiki.auto_toc = 1
+
+let g:vimwiki_list = [wiki]
+
+
+" add the pre tag for inserting code snippets
+" let g:vimwiki_valid_html_tags = 'b,i,s,u,sub,sup,kbd,br,hr, pre, script'
+
+" }}}
+" {{{ Replace motion
+nnoremap riw "_diwp
+nnoremap raw "_dawp
+vnoremap r "_dp
+
 " }}}
 " {{{ TODO's
 
@@ -317,6 +341,7 @@ vnoremap k gk
 
 " Real Delete (no save in register)
 " nnoremap <leader>dd "_d
+" vnoremap <leader>d "_d
 
 " While in insert mode, delete the last line (like <C-W>)
 " inoremap <C-l> <esc>d(
@@ -350,24 +375,30 @@ let g:currentmode={
       \ 't'      : 'T '
       \}
 
+" TODO: put this dynamic with colorsheme
 function! StatusLineModeColor()
-    if !has_key(g:currentmode, mode())
-        return 'N '
-    endif
+    try
+        if (mode() =~# '\v(n|no)')
+            " hi! StatusLineMode guifg=#1F2F38 ctermfg=236 guibg=#84B97C ctermbg=108
+            hi! StatusLineMode guifg=#1F2F38 ctermfg=236 guibg=#689d6a ctermbg=108
+        elseif (mode() ==# 'i')
+            " hi! StatusLineMode guifg=#1F2F38 ctermfg=236 ctermbg=74 guibg=#639EE4
+            hi! StatusLineMode guifg=#1F2F38 ctermfg=236 ctermbg=74 guibg=#98971a
+        elseif (mode() =~# '\v(v|V)' || g:currentmode[mode()] ==# 'V·Block' || get(g:currentmode, mode(), '') ==# 't')
+            " hi! StatusLineMode guifg=#1F2F38 ctermfg=236 ctermbg=173 guibg=#E18254
+            hi! StatusLineMode guifg=#1F2F38 ctermfg=236 ctermbg=173 guibg=#d65d0e
+        else
+            " hi! StatusLineMode guifg=#1F2F38 ctermfg=236 ctermbg=108 guibg=#DC657D
+            hi! StatusLineMode guifg=#1F2F38 ctermfg=236 ctermbg=108 guibg=#fb4934
+        endif
+        return get(g:currentmode, mode(), '')
+    catch /.*/
+        return 'N ' " mode() is not in dictionnary
+    endtry
 
-    if (mode() =~# '\v(n|no)')
-        hi! StatusLineMode guifg=#1F2F38 ctermfg=236 guibg=#84B97C ctermbg=108
-    elseif (mode() ==# 'i')
-        hi! StatusLineMode guifg=#1F2F38 ctermfg=236 ctermbg=74 guibg=#639EE4
-    elseif (mode() =~# '\v(v|V)' || g:currentmode[mode()] ==# 'V·Block' || get(g:currentmode, mode(), '') ==# 't')
-        hi! StatusLineMode guifg=#1F2F38 ctermfg=236 ctermbg=173 guibg=#E18254
-    else
-        hi! StatusLineMode guifg=#1F2F38 ctermfg=236 ctermbg=108 guibg=#DC657D
-    endif
-    return get(g:currentmode, mode(), '')
-    endif
 endfunction
 
+" neodark theme bases color
 let s:base1 = ['#1F2F38', 236]
 let s:base2 = ['#263A45', 237]
 let s:base3 = ['#475C69', 59]
@@ -382,18 +413,12 @@ function! StatuslineGit()
         return '[Git(' . FugitiveHead() . ')]'
 endfunction
 
-function! UpdateTodo()
-    let g:todo = CountMatches('TODO')
-endfunction
-
 function! StatusLineTodo()
     if b:todo_count > 0
         return '[Todo:' . b:todo_count . ']'
     else
         return ''
 endfunction
-
-" au BufEnter * if !exists('b:todo_count') | let b:todo_count = CountMatches('TODO:') | endif
 
 autocmd! BufEnter * let b:todo_count = CountMatches('TODO:') | call FocusedStatusLine()
 autocmd! BufWrite * let b:todo_count = CountMatches('TODO:')
