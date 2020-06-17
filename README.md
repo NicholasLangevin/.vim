@@ -3,7 +3,12 @@
 
 # Instalation
 
+## Unix systems
+```
+git clone --recurse-submodules https://github.com/NicholasLangevin/.vim
+```
+
 ## Windows
 ```
-git clone XXX %USERPROFILE%\vimfiles
+git clone --recurse-submodules https://github.com/NicholasLangevin/.vim %USERPROFILE%\vimfiles
 ```
