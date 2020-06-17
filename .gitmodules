@@ -11,7 +11,7 @@
 	path = pack/default/start/vimwiki
 	url = https://github.com/vimwiki/vimwiki
 [submodule "pack/default/start/vim-scriptease"]
-	path = pack/default/start/vim-scriptease
+	path = pack/default/opt/vim-scriptease
 	url = https://github.com/tpope/vim-scriptease
 [submodule "pack/default/start/ctrlp.vim"]
 	path = pack/default/start/ctrlp.vim
@@ -26,7 +26,7 @@
 	path = pack/default/start/clever-f.vim
 	url = https://github.com/rhysd/clever-f.vim
 [submodule "pack/default/start/vim-fish"]
-	path = pack/default/start/vim-fish
+	path = pack/default/opt/vim-fish
 	url = https://github.com/dag/vim-fish
 [submodule "pack/default/start/vim-which-key"]
 	path = pack/default/start/vim-which-key

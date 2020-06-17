@@ -10,8 +10,14 @@
 filetype plugin indent on
 let mapleader = ","
 let maplocalleader = "\\"
+let g:profile = 'master' " Either 'master' or 'work'
 
-
+" {{{ Optionnal plugins
+if g:profile == 'master'
+    packadd vim-fish
+    packadd vim-scriptease
+endif
+" }}}
 " {{{ Basic Settings
 set nocompatible                  | " Do not try to be *vi* compatible
 set clipboard=unnamed,unnamedplus | " Sync register with (*) and (+) clipboards
