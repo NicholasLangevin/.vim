@@ -85,6 +85,7 @@ syntax enable
 let g:gruvbox_italic = 0
 let g:gruvbox_contrast_dark = 'medium'
 let g:gruvbox_invert_selection = 0
+set background=dark
 colorscheme gruvbox
 
 " {{{ Setting true color
@@ -406,12 +407,25 @@ let s:base4 = ['#658595', 245]
 let s:base5 = ['#AABBC4', 250]
 
 function! StatuslineGit()
-    let l:branchname = FugitiveHead()
-    if FugitiveHead() == ''
+    try
+        let l:branch_name = FugitiveHead()
+    catch /.*/
+        return ''
+    endtry
+    if l:branch_name == ''
         return ''
     else
-        return '[Git(' . FugitiveHead() . ')]'
+        return 'Git[' . l:branch_name . ']'
 endfunction
+
+
+if !has('g:vim_QuickFixWindows')
+    " XXX: return b:todo_count=0 when plugin is not loaded to insure status line
+    " display correctly.
+    function! CountMatches(foo)
+        return 0
+    endfunction
+endif
 
 function! StatusLineTodo()
     if b:todo_count > 0
